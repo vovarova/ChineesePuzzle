@@ -1,4 +1,6 @@
-package japan;
+package fine.project;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Link {
 	private Integer firtsArg;
@@ -42,4 +44,8 @@ public class Link {
 		this.firtsArg = firtsArg;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

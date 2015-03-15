@@ -1,10 +1,10 @@
-package japan;
-
-import japan.algorythms.Algorythm;
-import japan.algorythms.CornersAlgorythm;
+package fine.project;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import fine.project.algorythms.Algorythm;
+import fine.project.algorythms.CornersAlgorythm;
 
 public class GameProcessor {
 	private Picture picture;

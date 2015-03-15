@@ -1,6 +1,6 @@
-package japan.algorythms;
+package fine.project.algorythms;
 
-import japan.ColumObj;
+import fine.project.ColumObj;
 
 public interface Algorythm {
 	void calculate(ColumObj columObj);

@@ -1,4 +1,4 @@
-package japan;
+package fine.project;
 
 import java.util.Scanner;
 

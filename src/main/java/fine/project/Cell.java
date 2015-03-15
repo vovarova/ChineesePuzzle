@@ -1,8 +1,14 @@
-package japan;
+package fine.project;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Cell {
 
 	public Cell() {
+	}
+
+	public Cell(Boolean state) {
+		this.state = state;
 	}
 
 	public Cell(Cell objToClone) {
@@ -19,4 +25,8 @@ public class Cell {
 		this.state = state;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

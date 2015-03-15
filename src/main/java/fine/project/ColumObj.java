@@ -1,10 +1,12 @@
-package japan;
+package fine.project;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class ColumObj {
-	private Parameters parameters;
+	private Parameters parameters = new Parameters();
 	private List<Cell> columVal = new ArrayList<Cell>();
 
 	public ColumObj() {
@@ -38,5 +40,11 @@ public class ColumObj {
 	public void setColumVal(List<Cell> columVal) {
 		this.columVal = columVal;
 	}
-
+	public void addCell(Boolean state){
+		columVal.add(new Cell(state));
+	}
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

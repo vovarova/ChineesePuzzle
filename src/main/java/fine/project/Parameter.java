@@ -1,4 +1,6 @@
-package japan;
+package fine.project;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Parameter {
 	
@@ -8,13 +10,24 @@ public class Parameter {
 	public Parameter(Parameter objToClone) {
 
 		this.val = objToClone.val;
-		this.link = objToClone.link;
+		if(objToClone.getLink()!=null){			
+			this.link = new Link(objToClone.getLink());
+		}
 	}
 
 	public Parameter(int val) {
 		this.val = val;
 	}
 
+	public Parameter(int val, Link link) {
+		this.val = val;
+		this.link = link;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 	public int getVal() {
 		return val;
 	}
