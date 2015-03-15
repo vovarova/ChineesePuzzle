@@ -48,4 +48,8 @@ public class Link {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+
+	public boolean isDone(int val) {
+		return getSectorSize()==val;
+	}
 }
