@@ -1,7 +1,7 @@
 package fine.project.algorythms;
 
-import fine.project.ColumObj;
+import fine.project.model.ColumnObj;
 
 public interface Algorythm {
-	void calculate(ColumObj columObj);
+	void calculate(ColumnObj columObj);
 }

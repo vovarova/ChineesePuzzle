@@ -1,8 +1,7 @@
-package fine.project;
+package fine.project.model;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Cell {
+public class Cell extends Model{
 
 	public Cell() {
 	}
@@ -23,10 +22,5 @@ public class Cell {
 
 	public void setState(Boolean state) {
 		this.state = state;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
 	}
 }

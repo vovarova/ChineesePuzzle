@@ -1,108 +1,84 @@
 package fine.project.algorythms;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import fine.project.Cell;
-import fine.project.ColumObj;
-import fine.project.Link;
-import fine.project.Parameter;
-import fine.project.Parameters;
+import fine.project.model.Cell;
+import fine.project.model.ColumnObj;
+import fine.project.model.Parameter.Link;
+import fine.project.model.Parameter;
 
 public class CornersAlgorythm implements Algorythm {
 
-	public void calculate(ColumObj columObj) {
+	public void calculate(ColumnObj columnObj) {
 
-		Parameters parameters = columObj.getParameters();
-		List<Parameter> paramValues = parameters.getValues();
+		List<Parameter> paramValues = columnObj.getParameters();
 		if (paramValues.isEmpty()) {
 			return;
 		}
-		Parameters leftCorner = getLeftCorner(columObj);
-		Parameters rightCorner = getRightCorner(columObj);
-		List<Parameter> leftCornervalues = leftCorner.getValues();
-		List<Parameter> rightCornervalues = rightCorner.getValues();
-		
+		List<Parameter> leftCornervalues = getLeftCornerParameters(columnObj);
+		List<Parameter> rightCornervalues = getRightCornerParameters(columnObj);
+
 		for (int i = 0; i < paramValues.size(); i++) {
 			Parameter parameter = paramValues.get(i);
-			Link link = parameter.getLink();
-			Parameter leftParameter = leftCornervalues.get(i);
-			Parameter rightParameter = rightCornervalues.get(i);
-			if(link==null || !link.isDone(parameter.getVal())){
-				Link compareLinks = compareLinks(leftParameter.getLink(),rightParameter.getLink());
-				if(compareLinks!=null){
-					parameter.setLink(compareLinks);
-					Integer firtsArg = compareLinks.getFirtsArg();
-					Integer secondArg = compareLinks.getSecondArg();
-					List<Cell> columVal = columObj.getColumVal();
-					for (int p = firtsArg; p <= secondArg; p++) {
-						columVal.get(p).setState(true);
-					}
-				}
+			if (!parameter.existLink()) {
+				Parameter leftParameter = leftCornervalues.get(i);
+				Parameter rightParameter = rightCornervalues.get(i);
+				ParametersUtils.parametersComparison(leftParameter,
+						rightParameter,parameter);
+				ParametersUtils.fillColumn(parameter, columnObj);
 			}
 		}
-		
-		
 	}
 
-	
-	
-	
-	private Link compareLinks(Link leftLink, Link rightLink) {
-		Set<Integer> result = createSet(leftLink);
-		Link linkResult = null;
-		result.retainAll(createSet(rightLink));
-		if(!result.isEmpty()){			
-			Integer max = Collections.max(result);
-			Integer min = Collections.min(result);			
-			linkResult = new Link(min, max);
-		}
-		return linkResult;
-	}
-	
-	private Set<Integer> createSet(Link link){
-		Set<Integer> linkSet = new HashSet<Integer>(link.getSectorSize());
-		for (int i = link.getFirtsArg(); i <= link.getSecondArg(); i++) {
-			linkSet.add(i);
-		}
-		return linkSet;
+
+
+	private List<Parameter> getLeftCornerParameters(ColumnObj columnObj) {
+		ColumnObj clone = columnObj.getClone();
+		ColumnObj leftCorner = getLeftCorner(clone);
+		return leftCorner.getParameters();
 	}
 
-	private Parameters getLeftCorner(ColumObj columObj) {
-		Parameters parameters = columObj.getParameters();
-		Parameters paramsClone = new Parameters(parameters);
-		List<Parameter> cloneParamValues = paramsClone.getValues();
-		List<Cell> columVal = columObj.getColumVal();
+	private List<Parameter> getRightCornerParameters(ColumnObj columnObj) {
+		ColumnObj clone = columnObj.getClone();
+		clone.reverseColumn();
+		ColumnObj leftCorner = getLeftCorner(clone);
+		leftCorner.reverseColumn();
+		return leftCorner.getParameters();
+	}
+
+
+	private ColumnObj getLeftCorner(ColumnObj columnObj) {
+
+		List<Parameter> paramValues = columnObj.getParameters();
+		List<Cell> columVal = columnObj.getColumnValues();
 		int currentIndex = 0;
-		for (Parameter param : cloneParamValues) {
+		for (Parameter param : paramValues) {
 			if (currentIndex >= columVal.size()) {
 				break;
 			}
 			int paramVal = param.getVal();
-			Link link = param.getLink();
-			if (link == null) {
+			if (!param.existLink()) {
 				for (int i = currentIndex; i < columVal.size(); i++) {
 					boolean cond = true;
 					int curenrElemIndex = 0;
 					for (int k = 0; k < paramVal && i + k < columVal.size(); k++) {
 						curenrElemIndex = i + k;
 						Cell cell = columVal.get(curenrElemIndex);
-						if (cell != null && cell.getState() != null) {
+						if (cell != null && cell.getState() != null
+								&& !cell.getState()) {
 							cond = false;
 							break;
 						}
 					}
 					if (cond) {
-						param.setLink(new Link(i, curenrElemIndex));
+						param.setLink(i, curenrElemIndex);
 						currentIndex = param.getLink().getSecondArg() + 2;
 						break;
 					}
 				}
 			} else {
-				if (!link.isDone(paramVal)) {
+				Link link = param.getLink();
+				if (!link.isDone()) {
 					int valuesLeft = param.getVal() - link.getSectorSize();
 					Integer secondArg = link.getSecondArg();
 					for (int k = 1; k <= valuesLeft
@@ -118,86 +94,36 @@ public class CornersAlgorythm implements Algorythm {
 				currentIndex = link.getSecondArg() + 2;
 			}
 		}
-		return paramsClone;
+		return columnObj;
 	}
 
-	private Parameters getRightCorner(ColumObj columObj) {
-		Parameters parameters = columObj.getParameters();
-		Parameters paramsClone = new Parameters(parameters);
-		List<Parameter> cloneParamValues = paramsClone.getValues();
-		List<Cell> columVal = columObj.getColumVal();
-		int currentIndex = columObj.getColumVal().size() - 1;
-		Collections.reverse(cloneParamValues);
-		for (Parameter param : cloneParamValues) {
-			if (currentIndex < 0) {
-				break;
-			}
-			int paramVal = param.getVal();
-			Link link = param.getLink();
-			if (link == null) {
-				for (int i = currentIndex; i >= 0; i--) {
-					boolean cond = true;
-					int curenrElemIndex = 0;
-					for (int k = 0; k < paramVal && i - k >= 0; k++) {
-						curenrElemIndex = i - k;
-						Cell cell = columVal.get(curenrElemIndex);
-						if (cell != null && cell.getState() != null) {
-							cond = false;
-							break;
-						}
-					}
-					if (cond) {
-						param.setLink(new Link(curenrElemIndex, i));
-						currentIndex = param.getLink().getFirtsArg() - 2;
-						break;
-					}
-				}
-			} else {
-				if(!link.isDone(paramVal)){
-					int valuesLeft = param.getVal() - link.getSectorSize();
-					Integer firstArg = link.getFirtsArg();
-					for (int k = 1; k <= valuesLeft && firstArg - k >= 0; k++) {
-						Cell cell = columVal.get(firstArg - k);
-						if (cell != null && cell.getState() == null) {
-							link.decrementFirst();
-						} else {
-							break;
-						}
-					}
-				}
-				currentIndex = link.getFirtsArg() - 2;
-			}
-		}
-		Collections.reverse(cloneParamValues);
-		return paramsClone;
-	}
+	
 
 	public static void main(String[] args) {
-		ColumObj columObj = new ColumObj();
-		columObj.addCell(null); // 0
-		columObj.addCell(null);// 1
-		columObj.addCell(null);// 2
-		columObj.addCell(null);// 3
-		columObj.addCell(null);// 4
-		columObj.addCell(null);// 5
-		columObj.addCell(false);// 6
-		columObj.addCell(null);// 7
-		columObj.addCell(null);// 8
-		columObj.addCell(null);// 9
-		columObj.addCell(null);// 10
-		columObj.addCell(false);// 11
-		columObj.addCell(null);// 12
-		columObj.addCell(null);// 13
-		columObj.addCell(false);// 14
-		columObj.addCell(null);// 15
-		columObj.addCell(false);// 16
-		Parameters parameters = columObj.getParameters();
-		parameters.addParameter(5);
-		parameters.addParameter(3);
+		ColumnObj columnObj = new ColumnObj();
+		columnObj.addCell(null); // 0
+		columnObj.addCell(null);// 1
+		columnObj.addCell(null);// 2
+		columnObj.addCell(null);// 3
+		columnObj.addCell(null);// 4
+		columnObj.addCell(null);// 5
+		columnObj.addCell(null);// 6
+		columnObj.addCell(null);// 7
+		columnObj.addCell(null);// 8
+		columnObj.addCell(null);// 9
+		columnObj.addCell(null);// 10
+		columnObj.addCell(null);// 11
+		columnObj.addCell(null);// 12
+		columnObj.addCell(null);// 13
+		columnObj.addCell(null);// 14
+		columnObj.addCell(null);// 15
+		columnObj.addCell(null);// 16
+		columnObj.addParameter(10);
+		columnObj.addParameter(4);
 
 		CornersAlgorythm cornersAlgorythm = new CornersAlgorythm();
-		cornersAlgorythm.calculate(columObj);
-		System.out.println(Arrays.toString(columObj.getColumVal().toArray()));
+		cornersAlgorythm.calculate(columnObj);
+		System.out.println(columnObj);
 	}
 
 }

@@ -2,6 +2,8 @@ package fine.project;
 
 import java.util.List;
 
+import fine.project.model.ColumnObj;
+
 public class Picture {
 
 	public static void main(String[] args) {
@@ -14,7 +16,7 @@ public class Picture {
 		return false;
 	}
 
-	public List<ColumObj> getColumsSplited() {
+	public List<ColumnObj> getColumsSplited() {
 		// TODO Auto-generated method stub
 		return null;
 	}

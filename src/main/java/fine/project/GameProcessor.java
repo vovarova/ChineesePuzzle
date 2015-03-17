@@ -5,6 +5,7 @@ import java.util.List;
 
 import fine.project.algorythms.Algorythm;
 import fine.project.algorythms.CornersAlgorythm;
+import fine.project.model.ColumnObj;
 
 public class GameProcessor {
 	private Picture picture;
@@ -30,9 +31,9 @@ public class GameProcessor {
 	
 	
 	public void process(){
-		List<ColumObj> columsSplited = picture.getColumsSplited();
+		List<ColumnObj> columsSplited = picture.getColumsSplited();
 		while (picture.isDone()){			
-			for (ColumObj columObj : columsSplited) {
+			for (ColumnObj columObj : columsSplited) {
 				for (Algorythm alg : algorythms) {
 					alg.calculate(columObj);
 				}
