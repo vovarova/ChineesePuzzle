@@ -25,10 +25,11 @@ public class Parameter extends Model {
 		this.columnSize = columnSize;
 		link = new Link(firstLinkArg, secondLinkArg);
 	}
-	public void reverseParameter(){
+	public Parameter reverseParameter(){
 		if(link!=null){
 			link.reverseLink();
 		}
+		return this;
 	}
 	public boolean existLink(){
 		return link!=null;
@@ -113,5 +114,9 @@ public class Parameter extends Model {
 		public int getValuesLeft(){
 			return val-getSectorSize();
 		}
+	}
+	
+	public Parameter getClone(){
+		return new Parameter(this);
 	}
 }

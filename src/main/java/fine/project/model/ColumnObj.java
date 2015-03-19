@@ -49,12 +49,13 @@ public class ColumnObj extends Model {
 		this.columnValues = columnValues;
 	}
 
-	public void reverseColumn() {
+	public ColumnObj reverseColumn() {
 		Collections.reverse(columnValues);
 		Collections.reverse(parameters);
 		for (Parameter parameter : parameters) {
 			parameter.reverseParameter();
 		}
+		return this;
 	}
 
 	public ColumnObj getClone() {
